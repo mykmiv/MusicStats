@@ -214,5 +214,21 @@ class AnalyseurStatistique:
         
         return (top5/utilisateur.nombre_ecoutes()) * 100
     
-    def regularite(self, utilisateur):
-        return
+    def coefficient_variation(self, utilisateur):
+        """
+        Cela retourne le coefficient de variation des écoutes quotidiennes de l'utilisateur
+        (écart-type / moyenne) * 100, en incluant les jours sans écoute.
+        """
+        if len(utilisateur.ecoutes) == 0:
+            return 0
+        liste_jours= [ecoute.date_heure.normalize() for ecoute in utilisateur.ecoutes]  #normalize permet de garder la date comme elle etait, mais modifie l'heure a 0, ce qui permet dempiler les dates qui ont le meme jour
+        jours_en_ordre = []
+        premier_jour = min(liste_jours)
+        dernier_jour = max(liste_jours)
+        while (premier_jour <= dernier_jour):
+            jours_en_ordre.append(premier_jour)
+            premier_jour += pd.Timedelta(days=1)    #pd.Timedelta permet d'aditionner un certain temps a un autre, dans ce cas jajoute 1 jour donc days=1. Sans cela, impossible d'additionner un jour a une date.
+        compte = pd.Series(liste_jours).value_counts().reindex(index=jours_en_ordre, fill_value=0)
+        compte_en_liste = list(compte)
+        return (np.std(compte_en_liste)/np.mean(compte_en_liste)) * 100
+
