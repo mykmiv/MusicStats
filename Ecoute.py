@@ -11,7 +11,7 @@ class Ecoute:
     def heure(self):
         return self.date_heure.hour ### hour = Attribut
         
-##essai de la classe Ecoute
-###ecoute1 = Ecoute("Xavier", "Chanson Try", pd.to_datetime("2026-10-24 18:40:19")) 
-###print(ecoute1.jour_semaine()) ###Lundi commence a 0 donc 5 = Samedi
-###print(ecoute1.heure()) ###18
+#essai de la classe Ecoute
+#ecoute1 = Ecoute("Xavier", "Chanson Try", pd.to_datetime("2026-10-24 18:40:19")) 
+#print(ecoute1.jour_semaine()) #Lundi commence a 0 donc 5 = Samedi
+#print(ecoute1.heure()) ###18
