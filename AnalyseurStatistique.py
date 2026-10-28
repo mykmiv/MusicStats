@@ -3,7 +3,7 @@ import numpy as np
 from datetime import timedelta
 
 
-class AnalysateurStatistique:
+class AnalyseurStatistique:
 
     def __init__(self, collection):
             self.collection = collection
@@ -213,3 +213,6 @@ class AnalysateurStatistique:
         top5 = sum(ecoutes_triees[:5]) # On prend juste les 5 premiers elements de la liste, car cest la somme des ecoutes de ces 5 artistes preferes
         
         return (top5/utilisateur.nombre_ecoutes()) * 100
+    
+    def regularite(self, utilisateur):
+        return
