@@ -26,7 +26,7 @@ class AnalyseurStatistique:
             maximum_ecoutes = 0
     
             for artiste in compteur_artistes:
-                if compteur_artistes[artiste] > maximum_ecoutess:
+                if compteur_artistes[artiste] > maximum_ecoutes:
                     maximum_ecoutes = compteur_artistes[artiste]
                     artiste_populaire = artiste
     
@@ -117,7 +117,7 @@ class AnalyseurStatistique:
             return None
     
         dates = list(donnees)
-        date.sort()
+        dates.sort()
     
         semaine_actuelle = dates[-1]
         semaine_precedente = dates[0]
