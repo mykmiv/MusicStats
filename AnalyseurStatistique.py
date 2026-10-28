@@ -196,7 +196,7 @@ class AnalyseurStatistique:
         return compte.reindex(index = range(24), fill_value=0) 
         
     
-    def fidelite(self, utilisateur):
+    def fidelite_musicale(self, utilisateur):
         """
         Cela retourne le pourcentage d'écoutes d'un utilisateur qui vont à ses 5 artistes préférés.  
         """
@@ -219,7 +219,7 @@ class AnalyseurStatistique:
         Cela retourne le coefficient de variation des écoutes quotidiennes de l'utilisateur
         (écart-type / moyenne) * 100, en incluant les jours sans écoute.
         """
-        if len(utilisateur.ecoutes) == 0:
+        if utilisateur.nombre_ecoutes() == 0:
             return 0
         liste_jours= [ecoute.date_heure.normalize() for ecoute in utilisateur.ecoutes]  #normalize permet de garder la date comme elle etait, mais modifie l'heure a 0, ce qui permet dempiler les dates qui ont le meme jour
         jours_en_ordre = []
