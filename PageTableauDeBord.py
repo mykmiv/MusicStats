@@ -102,23 +102,8 @@ class PageTableauDeBord(ctk.CTkFrame):
 
         self.label_top_chansons.configure(text=texte)
 
-    def afficher_graphique_artistes(self):
-        self.graphiques.graphique_top_artistes(self.collection)
-        plt.show()
-
-    def afficher_graphique_chansons(self):
-        self.graphiques.graphique_top_chansons(self.collection)
-        plt.show()
-
     def changer_periode(self, semaines):
         self.semaines = int(semaines)
-
-    def afficher_indicateurs(self):
-        self.afficher_statistiques()
-
-    def afficher_classements(self):
-        self.afficher_top_artistes()
-        self.afficher_top_chansons()
 
     def afficher_evolution_utilisateurs(self):
         self.graphiques.graphique_utilisateurs_actifs(self.collection, self.semaines)
