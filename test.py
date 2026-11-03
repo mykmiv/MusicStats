@@ -3,10 +3,9 @@ from Artiste import Artiste
 from Chanson import Chanson
 from Utilisateur import Utilisateur
 from Ecoute import Ecoute
-from Collectio import CollectionMusicale
+from Collection import CollectionMusicale
 from AnalyseurStatistique import AnalyseurStatistique
+from GestionnaireGraphique import GestionnaireGraphiques
+import matplotlib.pyplot as plt
 
-collection = CollectionMusicale()
-analyseur = AnalyseurStatistique(collection)
-
-#test 
+#test

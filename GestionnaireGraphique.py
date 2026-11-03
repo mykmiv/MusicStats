@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
-
+import AnalyseurStatistique
 class GestionnaireGraphiques:
 
      #Enregistre l'objet analyseur dans self.analyseur pour pouvoir
      #utiliser ses fonctions de calcul de statistiques musicales.
     def __init__(self, analyseur):
         self.analyseur = analyseur
-
+    
     #Crée une courbe du nombre d'utilisateurs actifs pour chaque semaine
     #de la période demandée et retourne la figure Matplotlib.
     def graphique_utilisateur_actifs(self, collection, semaine=4):
@@ -97,3 +97,34 @@ class GestionnaireGraphiques:
 
         return figure
 
+    def graphique_jours(self, collection):
+        """Cela retourne un diagramme circulaire des ecoutes par jour"""
+        jours = ["Lundi", "Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
+        ecoutes = self.analyseur.ecoutes_par_jour(collection)   #Myke a mis attribut analyseur
+        jours_graph = []
+        ecoutes_graph = []
+        for jour in range(7):
+            if ecoutes[jour] > 0:
+                ecoutes_graph.append(ecoutes[jour])
+                jours_graph.append(jours[jour])
+
+        fig = plt.figure() #Cest sur elle que le graphique sera cree
+        plt.pie(ecoutes_graph, labels= jours_graph, autopct="%1.0f%%")
+        plt.title("La répartition des écoutes par jour de la semaine ")
+        plt.legend(jours_graph)
+        return fig
+    
+    def graphique_heures(self, collection):
+         """Cela retourne un diagramme a barres des ecoutes par heure"""
+         heures = [i for i in range(24)]
+         ecoutes = self.analyseur.ecoutes_par_heure(collection) #Myke a mis attribut analyseur
+        
+         fig = plt.figure()
+         plt.bar(heures, ecoutes,
+                 width=0.8,
+                 color= "green")
+         plt.title("Le nombre d'écoutes par heure de la journée")
+         plt.xlabel("Heures")
+         plt.ylabel("Nombre d'écoutes")
+         plt.grid(False)
+         return fig
