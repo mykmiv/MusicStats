@@ -7,5 +7,6 @@ from Collection import CollectionMusicale
 from AnalyseurStatistique import AnalyseurStatistique
 from GestionnaireGraphique import GestionnaireGraphiques
 import matplotlib.pyplot as plt
-
+import customtkinter as ctk
+from PagePrevision import PagePrevision
 #test

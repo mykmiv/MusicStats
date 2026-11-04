@@ -1,7 +1,7 @@
 import pandas as pd
 from Artiste import Artiste
 from Chanson import Chanson
-from Collectio import CollectionMusicale
+from Collection import CollectionMusicale
 from Ecoute import Ecoute
 from Utilisateur import Utilisateur
 

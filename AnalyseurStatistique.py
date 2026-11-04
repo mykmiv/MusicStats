@@ -304,7 +304,7 @@ class AnalyseurStatistique:
             return pd.Series(np.zeros(24), dtype = int)
         liste_heures = [ecoute.heure() for ecoute in collection.ecoutes]
         compte = pd.Series(liste_heures).value_counts()
-        return compte.reindex(index = range(24), fill_value=0) 
+        return compte.reindex(index = range(24), fill_value=0) #meme structure que ecoute_par_jour, les index sont de 0-23
         
     
     def fidelite_musicale(self, utilisateur):

@@ -101,7 +101,7 @@ class GestionnaireGraphiques:
         """Cela retourne un diagramme circulaire des ecoutes par jour"""
         jours = ["Lundi", "Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
         ecoutes = self.analyseur.ecoutes_par_jour(collection)   #Myke a mis attribut analyseur
-        jours_graph = []
+        jours_graph = []    #sans cela, les jours sans ecoutes s'empilent et cest laid
         ecoutes_graph = []
         for jour in range(7):
             if ecoutes[jour] > 0:
