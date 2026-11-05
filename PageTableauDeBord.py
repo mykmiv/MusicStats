@@ -98,7 +98,7 @@ class PageTableauDeBord(ctk.CTkFrame):
         self.label_utilisateurs.configure(text="Nombre d'utilisateurs : " + str(total_utilisateurs))
 
         #Récupère l'artiste le plus écouté dans la collection.
-        classement = self.analyseur.top_artistes(self.collection, 1)
+        classement = self.analyseur.top_artistes(1)
 
         #Affiche son nom si le classement contient au moins 1 artiste.
         if len(classement) > 0:
@@ -113,7 +113,7 @@ class PageTableauDeBord(ctk.CTkFrame):
     def afficher_top_artistes(self):
 
         #Demande à l'analyseur le classement des 5 artistes.
-        classement = self.analyseur.top_artistes(self.collection, 5)
+        classement = self.analyseur.top_artistes(5)
 
         #Prépare le texte du classement et son premier numéro.
         texte = "Top 5 des artistes les plus écoutés :\n\n"
@@ -132,7 +132,7 @@ class PageTableauDeBord(ctk.CTkFrame):
     def afficher_top_chansons(self):
 
         #Demande à l'analyseur le classement des 5 chansons.
-        classement = self.analyseur.top_chansons(self.collection, 5)
+        classement = self.analyseur.top_chansons(5)
 
         #Prépare le texte du classement et son premier numéro.
         texte = "Top 5 des chansons les plus écoutées :\n\n"
@@ -158,9 +158,15 @@ class PageTableauDeBord(ctk.CTkFrame):
     def afficher_evolution_utilisateurs(self):
 
         #Crée le graphique à partir de la collection et de la période choisie.
-        self.graphiques.graphique_utilisateurs_actifs(self.collection, self.semaines)
+        self.graphiques.graphique_utilisateurs_actifs(self.semaines)
 
         #Ouvre la fenêtre Matplotlib contenant le graphique.
+        plt.show()
+
+    #Demande au gestionnaire de graphiques de créer le graphique
+    #des 5 artistes les plus écoutés et l'affiche.
+    def afficher_graphique_artistes(self):
+        self.graphiques.graphique_top_artistes(5)
         plt.show()
 
         

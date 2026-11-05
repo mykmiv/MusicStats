@@ -12,13 +12,13 @@ class AnalyseurStatistique:
     #Compte le nombre d'écoutes de chaque artiste dans la collection
     #puis retourne une liste contenant les n artistes les plus écoutés 
     #avec leur nombre d'écoutes du plus populaire au moins populaire.
-    def top_artistes(self, collection, n):
+    def top_artistes(self, n):
 
         #Crée un dictionnaire pour compter les écoutes par artiste.
         compteur_artistes = {}
 
         #Parcourt toutes les écoutes de la collection.
-        for ecoute in collection.ecoutes:
+        for ecoute in self.collection.ecoutes:
             artiste = ecoute.chanson.artiste
 
             #Augmente le nombre d'écoute de l'artiste si il est déjà
@@ -54,14 +54,14 @@ class AnalyseurStatistique:
     #Compte le nombre d'écoutes de chaque chanson dans la collection
     #puis retourne une liste contenant les n chansons les plus écoutés 
     #avec leur nombre d'écoutes du plus populaire au moins populaire.
-    def top_chansons(self, collection, n):
+    def top_chansons(self, n):
 
         #Crée un dictionnaire pour compter les écoutes par chanson.
         compteur_chanson = {}
 
 
         #Parcourt toutes les écoutes de la collection.
-        for ecoute in collection.ecoutes:
+        for ecoute in self.collection.ecoutes:
             chanson = ecoute.chanson
 
             #Augmente le nombre d'écoute de la chanson si elle est déjà
@@ -97,13 +97,13 @@ class AnalyseurStatistique:
     #Regarde les écoutes de la collection et les regroupe par semaine.
     #Retourne un dictionnaire avec la date de chaque début
     #de semaine et le nombre d'écoutes de cette semaine.
-    def ecoutes_par_semaine(self, collection):
+    def ecoutes_par_semaine(self):
 
         #Crée un dictionnaire pour compter le nombre d'écoutes par semaine.
         compteur_semaines = {}
 
         #Parcourt toutes les écoutes de la collection.
-        for ecoute in collection.ecoutes:
+        for ecoute in self.collection.ecoutes:
 
             #Récupère la date de l'écoute et l'heure.
             date = ecoute.date_heure.date()
@@ -126,7 +126,7 @@ class AnalyseurStatistique:
     #La période se termine à la semaine de la dernière écoute enregistrée.
     #Retourne un dictionnaire avec les dates des débuts de semaine et le 
     #nombre d'utilisateurs actifs liés à chaque semaine.
-    def utilisateur_actifs_par_semaine(self, collection, semaines = 4):
+    def utilisateur_actifs_par_semaine(self, semaines = 4):
 
         #Crée un dictionnaire pour enregistrer les uttilisateurs actifs
         #dans chaque semaine.
@@ -134,15 +134,15 @@ class AnalyseurStatistique:
 
         #Retourne un dictionnaire vide si aucune écoute n'existe
         #ou si le nombre de semaine demandé est invalide.
-        if len(collection.ecoutes) == 0 or semaines <= 0:
+        if len(self.collection.ecoutes) == 0 or semaines <= 0:
             return {}
 
         #Prend la date de la première écoute comme point de départ
         #pour rechercher la date la plus récente.
-        derniere_date = collection.ecoutes[0].date_heure.date()
+        derniere_date = self.collection.ecoutes[0].date_heure.date()
 
         #Parcourt les écoutes pour trouver la date la plus récente.
-        for ecoute in collection.ecoutes:
+        for ecoute in self.collection.ecoutes:
             date = ecoute.date_heure.date()
     
             if date > derniere_date:
@@ -159,7 +159,7 @@ class AnalyseurStatistique:
 
         #Parcourt les écoutes pour enregistrer les utilisateurs  dans 
         #la semaine correspondant à leur écoute.
-        for ecoute in collection.ecoutes:
+        for ecoute in self.collection.ecoutes:
             date = ecoute.date_heure.date()
             debut = date - timedelta(days=date.weekday())
 
@@ -183,10 +183,10 @@ class AnalyseurStatistique:
     #entre la première et la dernière semaine de la période demandée.
     #Retourne le pourcentage calculé ou None si le calcul est impossible 
     #genre quand la première semaine à zéro utilisateur.
-    def croissance_utilisateurs(self, collection, semaines = 4):
+    def croissance_utilisateurs(self, semaines = 4):
 
         #Récupère le nombre d'utilsateur actif par semaine.
-        donnees = self.utilisateur_actifs_par_semaine(collection, semaines)
+        donnees = self.utilisateur_actifs_par_semaine(self.collection, semaines)
 
         #Retourne None si la période contient moins de 2 semaines.
         if len(donnees) < 2:
@@ -220,21 +220,21 @@ class AnalyseurStatistique:
     #pendant trois semaines différentes ou plus dans la période demandée.
     #Retourne une liste avec les utilisateurs récurrents.
     #Si la collection est vide ou la période est invalide ça retourne une liste vide.
-    def utilisateurs_recurents(self, collection, semaines = 4):
+    def utilisateurs_recurents(self, semaines = 4):
 
         #Crée une liste vide pour enregistrer les utilisateurs récurrents..
         resultat = []
 
         #Retourne une liste vide si aucune écoute n'existe.
-        if len(collection.ecoutes) == 0 or semaines <= 0:
+        if len(self.collection.ecoutes) == 0 or semaines <= 0:
             return resultat
 
         #Prend la date de la première écoute pour commencer la recherche
         #de la date la plus récente.
-        derniere_date = collection.ecoutes[0].date_heure.date()
+        derniere_date = self.collection.ecoutes[0].date_heure.date()
 
         #Recherche la date de la dernière écoute de la collection.
-        for ecoute in collection.ecoutes:
+        for ecoute in self.collection.ecoutes:
             date = ecoute.date_heure.date()
 
             if date > derniere_date:
@@ -251,7 +251,7 @@ class AnalyseurStatistique:
         semaines_utilisateurs = {}
 
         #Parcourt toutes les çoutes de la collection.
-        for ecoute in collection.ecoutes:
+        for ecoute in self.collection.ecoutes:
             date = ecoute.date_heure.date()
             debut = date - timedelta(days=date.weekday())
             utilisateur = ecoute.utilisateur

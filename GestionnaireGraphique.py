@@ -9,10 +9,10 @@ class GestionnaireGraphiques:
     
     #Crée une courbe du nombre d'utilisateurs actifs pour chaque semaine
     #de la période demandée et retourne la figure Matplotlib.
-    def graphique_utilisateur_actifs(self, collection, semaine=4):
+    def graphique_utilisateur_actifs(self, semaines=4):
 
         #Récupère le nombre d'utilisateurs actifs pour chaque semaine.
-        donnees = self.amalyseur.utilisateur_actifs_par_semaine(collection, semaines)
+        donnees = self.analyseur.utilisateur_actifs_par_semaine(semaines)
 
         #Trie les dates des semaines dans l'ordre chronologique.
         dates = list(donnees)
@@ -35,7 +35,7 @@ class GestionnaireGraphiques:
         figure = plt.figure(figsize=(9, 5))
 
         #Trace la courbe et affiche les dates sur l'axe horizontal.
-        plt.plot(positions, valeur, marker='o-')
+        plt.plot(positions, valeurs, marker='o')
         plt.xticks(positions, etiquettes)
         plt.title("Evolution des utilisateurs actifs")
         plt.xlabel("Semaine")
@@ -46,10 +46,10 @@ class GestionnaireGraphiques:
     #Prend les n artistes les plus écoutés et crée un diagramme
     #à barres qui présente le nombre d'écoutes de chaque artiste.
     #Retourne la figure Matplotlib.
-    def graphique_top_artistes(self, collection, n = 5):
+    def graphique_top_artistes(self, n = 5):
 
         #Récupère le classement des artistes.
-        classement = self.analyseur.top_artistes(collection, n)
+        classement = self.analyseur.top_artistes(n)
 
         #Crée les listes pour les artistes et leur nombre d'écoutes.
         artistes = []
@@ -57,7 +57,7 @@ class GestionnaireGraphiques:
 
         #Sépare les artistes et leur nombre d'écoutes.
         for artiste,nombre in classement:
-            artistes.append(artiste)
+            artistes.append(artiste.nom)
             ecoutes.append(nombre)
 
         #Crée la figure et trace le diagramme à barres.
@@ -73,10 +73,10 @@ class GestionnaireGraphiques:
     #Prend les n chansons les plus écoutés et crée un diagramme
     #à barres présantant le nobre d'écoutes de chaque morceau.
     #Retourne la figure Matplotlib.
-    def graphique_top_morceaux(self, collection, n = 5):
+    def graphique_top_chansons(self, n = 5):
 
         #Récupère le classement des chansons.
-        classement = self.analyseur.top_moreaux(collection, n)
+        classement = self.analyseur.top_chansons(n)
 
         #Crée les listes pour les chansons et leur nombre d'écoutes.
         chansons = []
@@ -84,7 +84,7 @@ class GestionnaireGraphiques:
 
         #Sépare les chansons et leur nombre d'éçoute.
         for chanson, nombre in classement:
-            chansons.append(chanson)
+            chansons.append(chanson.titre + " - " + chanson.artiste.nom) #pour eviter de se melanger entre 2 chansons du meme titre.
             ecoutes.append(nombre)
 
         #Crée la figure et trace le diagramme à barres.
