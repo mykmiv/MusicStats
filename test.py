@@ -9,4 +9,6 @@ from GestionnaireGraphique import GestionnaireGraphiques
 import matplotlib.pyplot as plt
 import customtkinter as ctk
 from PagePrevision import PagePrevision
+
+
 #test
