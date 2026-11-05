@@ -32,7 +32,7 @@ class AnalyseurStatistique:
         classement = []
 
         #Tant que le classement n'a pas atteint le nombre d'artistes demandé.
-        while len(classement) < n and compteur_artistes > 0:
+        while len(classement) < n and len(compteur_artistes) > 0:
             artiste_populaire = None
             maximum_ecoutes = 0
 
@@ -75,7 +75,7 @@ class AnalyseurStatistique:
         classement = []
 
         #Tant que le classement n'a pas atteint le nombre de chansons demandé.
-        while len(classement) < n and compteur_chanson > 0:
+        while len(classement) < n and len(compteur_chanson) > 0:
             chanson_populaire = None
             maximum_ecoutes = 0
 
@@ -186,7 +186,7 @@ class AnalyseurStatistique:
     def croissance_utilisateurs(self, semaines = 4):
 
         #Récupère le nombre d'utilsateur actif par semaine.
-        donnees = self.utilisateur_actifs_par_semaine(self.collection, semaines)
+        donnees = self.utilisateur_actifs_par_semaine(semaines)
 
         #Retourne None si la période contient moins de 2 semaines.
         if len(donnees) < 2:
@@ -261,7 +261,7 @@ class AnalyseurStatistique:
 
                 #Crée un ensemble vide si l'utilisateur n'est pas encore
                 #dans le dictionnaire.
-                if debut not in semaines_utilisateurs:
+                if utilisateur not in semaines_utilisateurs:
                     semaines_utilisateurs[utilisateur] = set()
 
                 #Ajoute la semaine à l'ensemble de l'utilisateur.
@@ -279,12 +279,6 @@ class AnalyseurStatistique:
 
         #Retourne la liste des utilisateurs récurrents.
         return resultat
-    
-    def top_genres(self, collection, x): #si on a le temps je vais aussi faire cela.
-        """
-        Cela retourne les x genres les plus populaires dans la collection. 
-        """
-        return
    
     def ecoutes_par_jour(self, collection):
         """
