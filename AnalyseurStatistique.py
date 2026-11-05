@@ -32,7 +32,7 @@ class AnalyseurStatistique:
         classement = []
 
         #Tant que le classement n'a pas atteint le nombre d'artistes demandé.
-        while len(classement) < n and compteur_artistes > 0:
+        while len(classement) < n and len(compteur_artistes) > 0:
             artiste_populaire = None
             maximum_ecoutes = 0
 
@@ -75,7 +75,7 @@ class AnalyseurStatistique:
         classement = []
 
         #Tant que le classement n'a pas atteint le nombre de chansons demandé.
-        while len(classement) < n and compteur_chanson > 0:
+        while len(classement) < n and len(compteur_chanson) > 0:
             chanson_populaire = None
             maximum_ecoutes = 0
 
@@ -186,7 +186,7 @@ class AnalyseurStatistique:
     def croissance_utilisateurs(self, semaines = 4):
 
         #Récupère le nombre d'utilsateur actif par semaine.
-        donnees = self.utilisateur_actifs_par_semaine(self.collection, semaines)
+        donnees = self.utilisateur_actifs_par_semaine(semaines)
 
         #Retourne None si la période contient moins de 2 semaines.
         if len(donnees) < 2:
@@ -261,7 +261,7 @@ class AnalyseurStatistique:
 
                 #Crée un ensemble vide si l'utilisateur n'est pas encore
                 #dans le dictionnaire.
-                if debut not in semaines_utilisateurs:
+                if utilisateur not in semaines_utilisateurs:
                     semaines_utilisateurs[utilisateur] = set()
 
                 #Ajoute la semaine à l'ensemble de l'utilisateur.
@@ -279,30 +279,24 @@ class AnalyseurStatistique:
 
         #Retourne la liste des utilisateurs récurrents.
         return resultat
-    
-    def top_genres(self, collection, x): #si on a le temps je vais aussi faire cela.
-        """
-        Cela retourne les x genres les plus populaires dans la collection. 
-        """
-        return
    
-    def ecoutes_par_jour(self, collection):
+    def ecoutes_par_jour(self):
         """
         Cela retourne le nombre d'écoutes par jour dans la collection.
         """
-        if len(collection.ecoutes) == 0:
+        if len(self.collection.ecoutes) == 0:
             return pd.Series(np.zeros(7), dtype = int)   # 0 ecoute chaque jour, dtype int pour pas de decimale
-        liste_jours = [ecoute.jour_semaine() for ecoute in collection.ecoutes]  # Mettre le jour de chaque ecoute dans une liste
+        liste_jours = [ecoute.jour_semaine() for ecoute in self.collection.ecoutes]  # Mettre le jour de chaque ecoute dans une liste
         compte = pd.Series(liste_jours).value_counts() #probleme, value_counts() modifie lindex des jours
         return compte.reindex(index=[0,1,2,3,4,5,6], fill_value=0)  #Reindex remet les jours dans le bon ordre et fill_value remplace les Nan par 0 si aucune ecoute ce jour la
     
-    def ecoutes_par_heure(self, collection):
+    def ecoutes_par_heure(self):
         """
         Cela retourne le nombre d'écoutes par heure dans la collection.
         """
-        if len(collection.ecoutes) == 0:
+        if len(self.collection.ecoutes) == 0:
             return pd.Series(np.zeros(24), dtype = int)
-        liste_heures = [ecoute.heure() for ecoute in collection.ecoutes]
+        liste_heures = [ecoute.heure() for ecoute in self.collection.ecoutes]
         compte = pd.Series(liste_heures).value_counts()
         return compte.reindex(index = range(24), fill_value=0) #meme structure que ecoute_par_jour, les index sont de 0-23
         

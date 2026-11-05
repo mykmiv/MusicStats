@@ -73,7 +73,7 @@ class PageProfils(ctk.CTkFrame):
         utilisateur_trouve = None
 
         #Parcourt les utilisateurs de la collection.
-        for utilisateur in self.collection.utilisateurs:
+        for utilisateur in self.collection.utilisateurs.values():
 
             #Compare les noms sans tenir compte des majuscules.
             if utilisateur.nom.lower() == nom.lower():
@@ -172,7 +172,7 @@ class PageProfils(ctk.CTkFrame):
         for ecoute in utilisateur.ecoutes:
             chanson = ecoute.chanson
 
-            #Identifie chaque chanson par son titre et son artiste.
+            #Identifie chaque chanson par son titre et son artiste, car plusieurs chansons peuvent avoir le même titre.
             cle = (chanson.titre,  chanson.artiste.nom)
 
             #Augmente le compteur de la chanson si elle est déjà dans le dictionnaire
