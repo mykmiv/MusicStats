@@ -97,10 +97,10 @@ class GestionnaireGraphiques:
 
         return figure
 
-    def graphique_jours(self, collection):
+    def graphique_jours(self):
         """Cela retourne un diagramme circulaire des ecoutes par jour"""
         jours = ["Lundi", "Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
-        ecoutes = self.analyseur.ecoutes_par_jour(collection)   #Myke a mis attribut analyseur
+        ecoutes = self.analyseur.ecoutes_par_jour()   #Myke a mis attribut analyseur
         jours_graph = []    #sans cela, les jours sans ecoutes s'empilent et cest laid
         ecoutes_graph = []
         for jour in range(7):
@@ -114,10 +114,10 @@ class GestionnaireGraphiques:
         plt.legend(jours_graph)
         return fig
     
-    def graphique_heures(self, collection):
+    def graphique_heures(self):
          """Cela retourne un diagramme a barres des ecoutes par heure"""
          heures = [i for i in range(24)]
-         ecoutes = self.analyseur.ecoutes_par_heure(collection) #Myke a mis attribut analyseur
+         ecoutes = self.analyseur.ecoutes_par_heure() #Myke a mis attribut analyseur
         
          fig = plt.figure()
          plt.bar(heures, ecoutes,
