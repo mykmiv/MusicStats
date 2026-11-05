@@ -50,7 +50,16 @@ class PagePrevision(ctk.CTkFrame):
         prevision.preparer_donnees(self.collection) #On prepare le tableau des ecoutes
         historique = prevision.part_ecoutes(element, 9) #On regarde les 9 dernieres semaines pour prevoir la prochaine semaine
         futur = prevision.regression(historique, 1) #On prevoit 1 semaine plus tard
-        sem_actuel = historique[-1] 
+
+        if len(futur) == 0:
+            self.resultat_label.configure(text="Il n'y a pas assez de semaines pour faire la prévision") #Si le nombre de semaines est plus petit que 4
+            return ##On sort, aucune prévision à afficher
+        sem_actuel = round(historique[-1], 1) #Sinon le nombre de decimale est trop grand, exemple= 3,14232312134532, donc arrondit 1 chiffre après la virgule
+        sem_prevue = round(futur[-1], 1)    #La même raison pour les décimales
+        self.resultat_label.configure(text=f"Actuel : {sem_actuel} %   Prévu : {sem_prevue} %")
+        return # Finit
+
+
 
 
         
