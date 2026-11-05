@@ -2,14 +2,17 @@ import customtkinter as ctk #debut
 import tkinter as tk
 from Collection import CollectionMusicale
 from PrevisionPopularite import PrevisionPopularite
-
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 class PagePrevision(ctk.CTkFrame): 
     def __init__(self, master, collection):
         super().__init__(master)
         self.master = master
         self.collection = collection        
-        self.type_recherche = tk.StringVar(value="Artiste")        #Valeur depart quand la page souvre, ca va etre artiste
+        self.type_recherche = tk.StringVar(value="Artiste")   #Valeur depart quand la page souvre, ca va etre artiste
+        self.zone_du_graph = None  # pas encore de graphique au départ
         self.create_widgets()
+        
     def create_widgets(self):    
         #Initialise la grille
         self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
@@ -31,6 +34,7 @@ class PagePrevision(ctk.CTkFrame):
         #Resultat de la recherche par utilisateur
         self.resultat_label = ctk.CTkLabel(self, text="")   #Initialise resultat avec chaine carateres vide, lorsque que Utilisateur pese sur boutton, la, le texte apparait 
         self.resultat_label.grid(row=5, column=0, padx=20, pady=(10, 20))
+
     def rechercher_element(self,nom):
         """Cela retourne l'artiste ou la chanson qui porte ce nom"""
         if self.type_recherche.get() == "Artiste":
@@ -40,6 +44,7 @@ class PagePrevision(ctk.CTkFrame):
                 if chanson.titre == nom:
                     return chanson  
         return None #si aucune correspondance
+    
     def afficher_previsions(self):
         nom = self.nom_entry.get()
         element = self.rechercher_element(nom)
@@ -51,13 +56,25 @@ class PagePrevision(ctk.CTkFrame):
         historique = prevision.part_ecoutes(element, 9) #On regarde les 9 dernieres semaines pour prevoir la prochaine semaine
         futur = prevision.regression(historique, 1) #On prevoit 1 semaine plus tard
 
-        if len(futur) == 0:
+        if len(futur) == 0: #La methode regression() retourne tableau vide si il y a moins de 4 semaines
             self.resultat_label.configure(text="Il n'y a pas assez de semaines pour faire la prévision") #Si le nombre de semaines est plus petit que 4
             return ##On sort, aucune prévision à afficher
         sem_actuel = round(historique[-1], 1) #Sinon le nombre de decimale est trop grand, exemple= 3,14232312134532, donc arrondit 1 chiffre après la virgule
         sem_prevue = round(futur[-1], 1)    #La même raison pour les décimales
         self.resultat_label.configure(text=f"Actuel : {sem_actuel} %   Prévu : {sem_prevue} %")
-        return # Finit
+
+        #Creer le graphique des previsions
+        plt.figure(figsize=(6, 4))
+        plt.plot(range(len(historique)), historique, label="Semaines passées", color="blue")   #Les semaines déjà passées
+        plt.plot(len(historique), futur[0],marker = "o", label="Prévision", color="red")  #La prediction
+        plt.title("Part d'écoute par semaine")
+        plt.xlabel("Semaine")
+        plt.ylabel("Part d'écoute (%)")
+        plt.legend(loc = "lower right")
+        #Mettre le graphique dans la page
+        self.zone_du_graph = FigureCanvasTkAgg(plt.gcf(), master=self)  #gcf == get current figure, comme dans tp CTk, section matplotlib
+        self.zone_du_graph.draw()   #dessine le graph
+        self.zone_du_graph.get_tk_widget().grid(row=6, column=0, pady=(10, 10)) #place le graph dans la page
 
 
 
