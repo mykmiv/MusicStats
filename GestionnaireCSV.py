@@ -17,7 +17,7 @@ class GestionnaireCSV:
 
         # Enleve lignes avec info manquantes et transforme temps
         df = df.dropna(subset=["user_name", "listened_at", "artist_name", "track_name"])
-        df["date_heure"] = pd.to_datetime(df["listened_at"], unit="s")
+        df["date_heure"] = pd.to_datetime(df["listened_at"], format="%m/%d/%Y %H:%M")
 
         collection = CollectionMusicale()
         for i in range(len(df)):
@@ -26,24 +26,26 @@ class GestionnaireCSV:
             #Creer un artiste sil existe pas 
             artiste = collection.trouver_artiste(ligne["artist_name"])
             if artiste == None:
-                mbid = None
-                if not pd.isna(ligne["artist_mbids"]):
-                    mbid = ligne["artist_mbids"].split(";")[0]
-                artiste = Artiste(ligne["artist_name"], mbid)
+                artiste = Artiste(ligne["artist_name"])
                 collection.ajouter_artiste(artiste)
 
             #Chanson
             chanson = collection.trouver_chanson(ligne["track_name"], artiste.nom)
             if chanson == None:
                 duree = None
-                if not pd.isna(ligne["duration_ms"]):
-                    duree = ligne["duration_ms"] / 1000
+                if not pd.isna(ligne["duree"]):
+                    duree = ligne["duree"]
                 recording_mbid = None
                 if not pd.isna(ligne["recording_mbid"]):
                     recording_mbid = ligne["recording_mbid"]
                 chanson = Chanson(ligne["track_name"], artiste, duree, recording_mbid)
                 collection.ajouter_chanson(chanson)
                 artiste.ajouter_chanson(chanson)
+
+            else:
+                #Ajoute la durée si elle est inconnue et que le CSV en contient une.
+                if chanson.duree == None and not pd.isna(ligne["duree"]):
+                    chanson.duree = ligne["duree"]
 
             # Utilisateur
             utilisateur = collection.trouver_utilisateur(ligne["user_name"])
