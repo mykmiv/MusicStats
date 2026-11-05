@@ -12,6 +12,7 @@ class PagePrevision(ctk.CTkFrame):
         self.type_recherche = tk.StringVar(value="Artiste")   #Valeur depart quand la page souvre, ca va etre artiste
         self.zone_du_graph = None  # pas encore de graphique au départ
         self.create_widgets()
+        
     def create_widgets(self):    
         #Initialise la grille
         self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
@@ -33,6 +34,7 @@ class PagePrevision(ctk.CTkFrame):
         #Resultat de la recherche par utilisateur
         self.resultat_label = ctk.CTkLabel(self, text="")   #Initialise resultat avec chaine carateres vide, lorsque que Utilisateur pese sur boutton, la, le texte apparait 
         self.resultat_label.grid(row=5, column=0, padx=20, pady=(10, 20))
+
     def rechercher_element(self,nom):
         """Cela retourne l'artiste ou la chanson qui porte ce nom"""
         if self.type_recherche.get() == "Artiste":
@@ -42,6 +44,7 @@ class PagePrevision(ctk.CTkFrame):
                 if chanson.titre == nom:
                     return chanson  
         return None #si aucune correspondance
+    
     def afficher_previsions(self):
         nom = self.nom_entry.get()
         element = self.rechercher_element(nom)
