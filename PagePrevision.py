@@ -13,6 +13,7 @@ class PagePrevision(ctk.CTkFrame):
         self.zone_du_graph = None  # pas encore de graphique au départ
         self.horizon = 1
         self.create_widgets()
+        
     def create_widgets(self):    
     
         #nom de l'artiste
@@ -58,13 +59,20 @@ class PagePrevision(ctk.CTkFrame):
         return None #si aucune correspondance
     
     def afficher_previsions(self):
+
+        #Supprime le graphique précedent avant une nouvelle recherche.
+        if self.zone_du_graph is None:
+            self.zone_du_graph.get_tk_widget().destroy()
+            self.zone_du_graph = None
+
         nom = self.nom_entry.get()
+
         element = self.rechercher_element(nom)
         if element == None:
             self.resultat_label.configure(text="Nous n'avons pas trouvé votre chanson/artiste")##
             return
         prevision = PrevisionPopularite()
-        prevision.preparer_donnees(self.collection) #On prepare le tableau des ecoutes, cela fait la colonne semaine dans prevision et sans cela, on pourrait pas regarder les 9 dernieres semaines
+        prevision.preparer_donnees(self.collection) #On prepare le tableau des ecoutes
         historique = prevision.part_ecoutes(element, 9) #On regarde les 9 dernieres semaines pour prevoir la prochaine semaine
         futur = prevision.regression(historique, self.horizon) #On prevoit 1 semaine plus tard
 
@@ -73,20 +81,24 @@ class PagePrevision(ctk.CTkFrame):
             return ##On sort, aucune prévision à afficher
         sem_actuel = round(historique[-1], 1) #Sinon le nombre de decimale est trop grand, exemple= 3,14232312134532, donc arrondit 1 chiffre après la virgule
         sem_prevue = round(futur[-1], 1)    #La même raison pour les décimales
-        self.resultat_label.configure(text=f"Actuel : {sem_actuel} %   Prévu : {sem_prevue} %")
+        self.resultat_label.configure(text=f"Actuel : {sem_actuel} %   Prévu dans {self.horizon} semaines : {sem_prevue} %")
 
         #Creer le graphique des previsions
         plt.figure(figsize=(6, 4))
-        plt.plot(range(len(historique)), historique, label="Semaines passées", color="blue")   #Les semaines déjà passées
+        plt.plot(range(len(historique), len(historique) + len(futur)), futur, marker="o", label="Prévision", color="red")   #Les semaines déjà passées
         plt.plot(len(historique), futur[0],marker = "o", label="Prévision", color="red")  #La prediction
         plt.title("Part d'écoute par semaine")
         plt.xlabel("Semaine")
         plt.ylabel("Part d'écoute (%)")
         plt.legend(loc = "lower right")
         #Mettre le graphique dans la page
-        self.zone_du_graph = FigureCanvasTkAgg(plt.gcf(), master=self)  #gcf == get current figure, comme dans tp CTk, section matplotlib
+        figure = plt.cgf()
+
+        self.zone_du_graph = FigureCanvasTkAgg(figure, master=self)  #gcf == get current figure, comme dans tp CTk, section matplotlib
         self.zone_du_graph.draw()   #dessine le graph
         self.zone_du_graph.get_tk_widget().grid(row=6, column=0, pady=(10, 10)) #place le graph dans la page
+
+        plt.close(figure)
 
 
 
