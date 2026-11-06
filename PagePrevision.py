@@ -12,8 +12,8 @@ class PagePrevision(ctk.CTkFrame):
         self.type_recherche = tk.StringVar(value="Artiste")   #Valeur depart quand la page souvre, ca va etre artiste
         self.zone_du_graph = None  # pas encore de graphique au départ
         self.create_widgets()
-        
     def create_widgets(self):    
+        
         #Initialise la grille
         self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
         #nom de l'artiste
@@ -52,7 +52,7 @@ class PagePrevision(ctk.CTkFrame):
             self.resultat_label.configure(text="Nous n'avons pas trouvé votre chanson/artiste")##
             return
         prevision = PrevisionPopularite()
-        prevision.preparer_donnees(self.collection) #On prepare le tableau des ecoutes
+        prevision.preparer_donnees(self.collection) #On prepare le tableau des ecoutes, cela fait la colonne semaine dans prevision et sans cela, on pourrait pas regarder les 9 dernieres semaines
         historique = prevision.part_ecoutes(element, 9) #On regarde les 9 dernieres semaines pour prevoir la prochaine semaine
         futur = prevision.regression(historique, 1) #On prevoit 1 semaine plus tard
 
