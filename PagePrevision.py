@@ -61,7 +61,7 @@ class PagePrevision(ctk.CTkFrame):
     def afficher_previsions(self):
 
         #Supprime le graphique précedent avant une nouvelle recherche.
-        if self.zone_du_graph is None:
+        if self.zone_du_graph is not None:
             self.zone_du_graph.get_tk_widget().destroy()
             self.zone_du_graph = None
 
@@ -85,14 +85,14 @@ class PagePrevision(ctk.CTkFrame):
 
         #Creer le graphique des previsions
         plt.figure(figsize=(6, 4))
-        plt.plot(range(len(historique), len(historique) + len(futur)), futur, marker="o", label="Prévision", color="red")   #Les semaines déjà passées
-        plt.plot(len(historique), futur[0],marker = "o", label="Prévision", color="red")  #La prediction
+        plt.plot(range(len(historique)), historique, label="Semaines passées", color="blue")   #Les semaines déjà passées
+        plt.plot(range(len(historique), len(historique) + len(futur)), futur, marker="o", label="Prévision", color="red")  #La prediction
         plt.title("Part d'écoute par semaine")
         plt.xlabel("Semaine")
         plt.ylabel("Part d'écoute (%)")
         plt.legend(loc = "lower right")
         #Mettre le graphique dans la page
-        figure = plt.cgf()
+        figure = plt.gcf()
 
         self.zone_du_graph = FigureCanvasTkAgg(figure, master=self)  #gcf == get current figure, comme dans tp CTk, section matplotlib
         self.zone_du_graph.draw()   #dessine le graph
