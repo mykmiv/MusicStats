@@ -13,9 +13,7 @@ class PagePrevision(ctk.CTkFrame):
         self.zone_du_graph = None  # pas encore de graphique au départ
         self.create_widgets()
     def create_widgets(self):    
-        
-        #Initialise la grille
-        self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+    
         #nom de l'artiste
         self.nom_entry = ctk.CTkEntry(self,placeholder_text = "Entrez le nom de l'ariste ou de la chanson")  #contient nom artiste
         self.nom_entry.grid(row=1, column =0, padx = 20, pady = (20,10))
