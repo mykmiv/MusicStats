@@ -285,10 +285,10 @@ class AnalyseurStatistique:
         Cela retourne le nombre d'écoutes par jour dans la collection.
         """
         if len(self.collection.ecoutes) == 0:
-            return pd.Series(np.zeros(7), dtype = int)   # 0 ecoute chaque jour, dtype int pour pas de decimale
+            return pd.Series(np.zeros(7), dtype = int)   # 0 écoute chaque jour, dtype int pour pas de decimale
         liste_jours = [ecoute.jour_semaine() for ecoute in self.collection.ecoutes]  # Mettre le jour de chaque ecoute dans une liste
-        compte = pd.Series(liste_jours).value_counts() #probleme, value_counts() modifie lindex des jours
-        return compte.reindex(index=[0,1,2,3,4,5,6], fill_value=0)  #Reindex remet les jours dans le bon ordre et fill_value remplace les Nan par 0 si aucune ecoute ce jour la
+        compte = pd.Series(liste_jours).value_counts() #Problème, value_counts() modifie l'index des jours
+        return compte.reindex(index=[0,1,2,3,4,5,6], fill_value=0)  #Reindex remet les jours dans le bon ordre et fill_value remplace les Nan par 0 si aucune écoute ce jour là
     
     def ecoutes_par_heure(self):
         """
@@ -298,14 +298,14 @@ class AnalyseurStatistique:
             return pd.Series(np.zeros(24), dtype = int)
         liste_heures = [ecoute.heure() for ecoute in self.collection.ecoutes]
         compte = pd.Series(liste_heures).value_counts()
-        return compte.reindex(index = range(24), fill_value=0) #meme structure que ecoute_par_jour, les index sont de 0-23
+        return compte.reindex(index = range(24), fill_value=0) #Même structure que ecoute_par_jour, les index sont de 0-23
         
     
     def fidelite_musicale(self, utilisateur):
         """
         Cela retourne le pourcentage d'écoutes d'un utilisateur qui vont à ses 5 artistes préférés.  
         """
-        ### (ecoutes des 5 artistes pref / ecoutes totales ) * 100
+        ### (écoutes des 5 artistes pref / écoutes totales ) * 100
         if utilisateur.nombre_ecoutes() == 0: #On sort si l'utlisateur n'a pas encore d'ecoutes
             return 0
         artistes ={}
@@ -314,8 +314,8 @@ class AnalyseurStatistique:
                 artistes[ecoute.chanson.artiste] += 1
             else:
                 artistes[ecoute.chanson.artiste] = 1
-        ecoutes_triees = sorted(artistes.values(), reverse = True) ### Liste ordre decroissante des ecoutes par artiste
-        top5 = sum(ecoutes_triees[:5]) # On prend juste les 5 premiers elements de la liste, car cest la somme des ecoutes de ces 5 artistes preferes
+        ecoutes_triees = sorted(artistes.values(), reverse = True) ### Liste ordre décroissante des écoutes par artiste
+        top5 = sum(ecoutes_triees[:5]) # On prend juste les 5 premiers éléments de la liste, car c'est la somme des écoutes de ses 5 artistes préférés
         
         return (top5/utilisateur.nombre_ecoutes()) * 100
     

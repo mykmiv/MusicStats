@@ -74,7 +74,7 @@ class PagePrevision(ctk.CTkFrame):
         prevision = PrevisionPopularite()
         prevision.preparer_donnees(self.collection) #On prepare le tableau des ecoutes
         historique = prevision.part_ecoutes(element, 9) #On regarde les 9 dernieres semaines pour prevoir la prochaine semaine
-        futur = prevision.regression(historique, self.horizon) #On prevoit 1 semaine plus tard
+        futur = prevision.regression(historique, self.horizon) #On prevoit 1 semaine plus tard #Myke a mis self.horizon pour prévoir aussi 4 semaines dans le futur
 
         if len(futur) == 0: #La methode regression() retourne tableau vide si il y a moins de 4 semaines
             self.resultat_label.configure(text="Il n'y a pas assez de semaines pour faire la prévision") #Si le nombre de semaines est plus petit que 4
