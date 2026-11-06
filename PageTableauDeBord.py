@@ -1,5 +1,9 @@
+from tkinter import filedialog, messagebox
+
 import customtkinter as ctk
 import matplotlib.pyplot as plt
+
+from GestionnaireCSV import GestionnaireCSV
 
 class PageTableauDeBord(ctk.CTkFrame):
 
@@ -75,6 +79,10 @@ class PageTableauDeBord(ctk.CTkFrame):
         #Crée un bouton pour afficher le graphique des utilisateurs actifs.
         self.bouton_evolution = ctk.CTkButton(self, text="Evolution des utilisateurs actifs", command=self.afficher_evolution_utilisateurs)
         self.bouton_evolution.pack(pady=10)
+
+        #Crée un bouton pour exporter les statistiques du tableau de bord en CSV.
+        self.bouton_exporter = ctk.CTkButton(self, text="Exporter les statistiques (CSV)", command=self.exporter_csv)
+        self.bouton_exporter.pack(pady=10)
 
     def afficher_statistiques(self):
 
@@ -174,6 +182,69 @@ class PageTableauDeBord(ctk.CTkFrame):
     def afficher_graphique_chansons(self):
         self.graphiques.graphique_top_chansons(5)
         plt.show()
+
+    #Prépare les statistiques affichées dans le tableau de bord sous forme
+    #de lignes (categorie, rang, nom, valeur) pour pouvoir les exporter en CSV.
+    def preparer_donnees_export(self):
+
+        #Crée une liste vide pour enregistrer chaque ligne du fichier.
+        lignes = []
+
+        #Compte le nombre d'utilisateurs différents (le set évite les doublons).
+        utilisateurs = set()
+        for ecoute in self.collection.ecoutes:
+            utilisateurs.add(ecoute.utilisateur)
+
+        #Ajoute les statistiques générales.
+        lignes.append({"categorie": "Statistiques générales", "rang": "", "nom": "Nombre d'écoutes",
+                       "valeur": len(self.collection.ecoutes)})
+        lignes.append({"categorie": "Statistiques générales", "rang": "", "nom": "Nombre d'utilisateurs",
+                       "valeur": len(utilisateurs)})
+
+        #Ajoute le top 5 des artistes avec leur nombre d'écoutes.
+        position = 1
+        for artiste, nombre in self.analyseur.top_artistes(5):
+            lignes.append({"categorie": "Top artistes", "rang": position, "nom": artiste.nom, "valeur": nombre})
+            position += 1
+
+        #Ajoute le top 5 des chansons avec leur nombre d'écoutes.
+        position = 1
+        for chanson, nombre in self.analyseur.top_chansons(5):
+            lignes.append({"categorie": "Top chansons", "rang": position, "nom": chanson.titre, "valeur": nombre})
+            position += 1
+
+        #Ajoute les utilisateurs actifs par semaine pour la période choisie,
+        #de la semaine la plus ancienne à la plus récente.
+        actifs = self.analyseur.utilisateur_actifs_par_semaine(self.semaines)
+        dates = list(actifs)
+        dates.sort()
+        for debut in dates:
+            lignes.append({"categorie": "Utilisateurs actifs (" + str(self.semaines) + " semaines)",
+                           "rang": "", "nom": "Semaine du " + str(debut), "valeur": actifs[debut]})
+
+        #Retourne toutes les lignes à exporter.
+        return lignes
+
+    #Demande à l'utilisateur où enregistrer le fichier puis exporte
+    #les statistiques du tableau de bord dans un fichier CSV.
+    def exporter_csv(self):
+
+        #Ouvre une boite de dialogue pour choisir le nom et l'emplacement du fichier.
+        chemin = filedialog.asksaveasfilename(title="Exporter les statistiques",
+                                              defaultextension=".csv",
+                                              initialfile="statistiques_musicstats.csv",
+                                              filetypes=[("Fichiers CSV", "*.csv")])
+
+        #Arrête si l'utilisateur a annulé la boite de dialogue.
+        if not chemin:
+            return
+
+        #Exporte les données et affiche un message selon le résultat.
+        reussi = GestionnaireCSV().exporter_statistiques(chemin, self.preparer_donnees_export())
+        if reussi:
+            messagebox.showinfo("Exportation réussie", "Les statistiques ont été exportées dans :\n\n" + chemin)
+        else:
+            messagebox.showerror("Erreur d'exportation", "Impossible d'exporter les statistiques dans :\n\n" + chemin)
 
         
 
