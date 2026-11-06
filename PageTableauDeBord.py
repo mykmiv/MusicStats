@@ -158,7 +158,7 @@ class PageTableauDeBord(ctk.CTkFrame):
     def afficher_evolution_utilisateurs(self):
 
         #Crée le graphique à partir de la collection et de la période choisie.
-        self.graphiques.graphique_utilisateurs_actifs(self.semaines)
+        self.graphiques.graphique_utilisateur_actifs(self.semaines)
 
         #Ouvre la fenêtre Matplotlib contenant le graphique.
         plt.show()
@@ -167,6 +167,12 @@ class PageTableauDeBord(ctk.CTkFrame):
     #des 5 artistes les plus écoutés et l'affiche.
     def afficher_graphique_artistes(self):
         self.graphiques.graphique_top_artistes(5)
+        plt.show()
+
+    #Demande au gestionnaire de creer le graphique
+    #des 5 chansons les plus ecoutes et l'affiche.
+    def afficher_graphique_chansons(self):
+        self.graphiques.graphique_top_chansons(5)
         plt.show()
 
         

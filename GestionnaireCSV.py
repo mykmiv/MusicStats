@@ -17,8 +17,17 @@ class GestionnaireCSV:
 
         # Enleve lignes avec info manquantes et transforme temps
         df = df.dropna(subset=["user_name", "listened_at", "artist_name", "track_name"])
-        df["date_heure"] = pd.to_datetime(df["listened_at"], format="%m/%d/%Y %H:%M")
+        df["date_heure"] = pd.to_datetime(df["listened_at"], format="%m/%d/%Y %H:%M", errors="coerce")
 
+        #Supprime les lignes dont la date est invalide
+        df = df.dropna(subset=["date_heure"])
+
+        #Transforme les durées en nombres.
+        df["duree"] = pd.to_numeric(df["duree"], errors="coerce")
+
+        #Les durées nulles ou négatives sont considérer comme inconnues.
+        df.loc[df["duree"] <= 0, "duree"] = float("nan")
+ 
         collection = CollectionMusicale()
         for i in range(len(df)):
             ligne = df.iloc[i]

@@ -11,6 +11,7 @@ class PagePrevision(ctk.CTkFrame):
         self.collection = collection        
         self.type_recherche = tk.StringVar(value="Artiste")   #Valeur depart quand la page souvre, ca va etre artiste
         self.zone_du_graph = None  # pas encore de graphique au départ
+        self.horizon = 1
         self.create_widgets()
     def create_widgets(self):    
     
@@ -33,6 +34,19 @@ class PagePrevision(ctk.CTkFrame):
         self.resultat_label = ctk.CTkLabel(self, text="")   #Initialise resultat avec chaine carateres vide, lorsque que Utilisateur pese sur boutton, la, le texte apparait 
         self.resultat_label.grid(row=5, column=0, padx=20, pady=(10, 20))
 
+        #Permet de choisir entre la prochaine semaine et le prochain mois.
+        self.choix_horizon = ctk.CTkSegmentedButton(self, values=["1 semaine", "4 semaines"], command=self.changer_horizon)
+        self.choix_horizon.grid(row=7, column=0, padx=20, pady=10)
+        self.choix_horizon.set("1 semaine")  #Sélectionne 1 semaine par défaut.
+
+    #Enregistre le nombre de semaines choisi pour la prévision.
+    def changer_horizon(self, choix):
+
+        if choix == "1 semaine":
+            self.horizon = 1
+        else:
+            self.horizon = 4
+
     def rechercher_element(self,nom):
         """Cela retourne l'artiste ou la chanson qui porte ce nom"""
         if self.type_recherche.get() == "Artiste":
@@ -52,7 +66,7 @@ class PagePrevision(ctk.CTkFrame):
         prevision = PrevisionPopularite()
         prevision.preparer_donnees(self.collection) #On prepare le tableau des ecoutes, cela fait la colonne semaine dans prevision et sans cela, on pourrait pas regarder les 9 dernieres semaines
         historique = prevision.part_ecoutes(element, 9) #On regarde les 9 dernieres semaines pour prevoir la prochaine semaine
-        futur = prevision.regression(historique, 1) #On prevoit 1 semaine plus tard
+        futur = prevision.regression(historique, self.horizon) #On prevoit 1 semaine plus tard
 
         if len(futur) == 0: #La methode regression() retourne tableau vide si il y a moins de 4 semaines
             self.resultat_label.configure(text="Il n'y a pas assez de semaines pour faire la prévision") #Si le nombre de semaines est plus petit que 4
