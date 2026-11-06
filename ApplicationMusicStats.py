@@ -29,6 +29,8 @@ class ApplicationMusicStats(ctk.CTk):
     #Initialise la fenetre principale, charge le CSV une seule fois
     #et crée les objets partagés par les 3 pages.
     def __init__(self, chemin_csv=CHEMIN_CSV_DEFAUT):
+        ctk.set_appearance_mode("dark")
+        ctk.set_default_color_theme("blue")
         ctk.CTk.__init__(self)
 
         #Objets créés seulement si le chargement du CSV réussit.
@@ -55,23 +57,26 @@ class ApplicationMusicStats(ctk.CTk):
     def creer_menu(self):
 
         #Crée un cadre pour le menu de navigation.
-        self.menu = ctk.CTkFrame(self, width=200)
-        self.menu.pack(side="left", fill="y", padx=10, pady=10)
+        self.menu = ctk.CTkFrame(self, width=230, corner_radius=12)
+        self.menu.pack(side="left", fill="y", padx=(10, 0), pady=10)
         self.menu.pack_propagate(False)
 
         #Affiche le titre de l'application.
-        self.titre = ctk.CTkLabel(self.menu, text="MusicStats", font=("Arial", 26, "bold"))
-        self.titre.pack(pady=30)
+        self.titre = ctk.CTkLabel(self.menu, text="🎵 MusicStats", font=("Arial", 24, "bold"))
+        self.titre.pack(pady=(30, 0), padx=20, anchor="w")
+
+        self.sous_titre = ctk.CTkLabel(self.menu, text="Statistiques d'écoute", font=("Arial", 13),
+                                       text_color="gray60")
+        self.sous_titre.pack(pady=(0, 30), padx=20, anchor="w")
 
         #Crée les 3 boutons de navigation.
-        self.bouton_dashboard = ctk.CTkButton(self.menu, text="Tableau de bord", command=self.afficher_dashboard)
-        self.bouton_dashboard.pack(pady=10, padx=15, fill="x")
+        self.bouton_dashboard = self.creer_bouton_menu("📊   Tableau de bord", self.afficher_dashboard)
+        self.bouton_profils = self.creer_bouton_menu("👤   Profils", self.afficher_profils)
+        self.bouton_previsions = self.creer_bouton_menu("📈   Prévisions", self.afficher_previsions)
 
-        self.bouton_profils = ctk.CTkButton(self.menu, text="Profils", command=self.afficher_profils)
-        self.bouton_profils.pack(pady=10, padx=15, fill="x")
-
-        self.bouton_previsions = ctk.CTkButton(self.menu, text="Prévisions", command=self.afficher_previsions)
-        self.bouton_previsions.pack(pady=10, padx=15, fill="x")
+        self.label_infos = ctk.CTkLabel(self.menu, text="Aucune donnée chargée", font=("Arial", 12),
+                                        text_color="gray55", justify="left")
+        self.label_infos.pack(side="bottom", pady=20, padx=20, anchor="w")
 
         #Associe chaque nom de page à son bouton.
         self.boutons = {"dashboard": self.bouton_dashboard,
@@ -79,11 +84,18 @@ class ApplicationMusicStats(ctk.CTk):
                         "previsions": self.bouton_previsions}
 
         #Conserve la couleur normale des boutons pour pouvoir la remettre.
-        self.couleur_bouton = self.bouton_dashboard.cget("fg_color")
-        self.couleur_bouton_actif = self.bouton_dashboard.cget("hover_color")
+        self.couleur_bouton = "transparent"
+        self.couleur_bouton_actif = ctk.ThemeManager.theme["CTkButton"]["fg_color"]
 
         #Les boutons restent désactivés tant que les données ne sont pas chargées.
         self.activer_menu(False)
+
+    def creer_bouton_menu(self, texte, commande):
+        bouton = ctk.CTkButton(self.menu, text=texte, command=commande, height=42, corner_radius=8,
+                               anchor="w", font=("Arial", 15), fg_color="transparent",
+                               text_color="gray90", hover_color="gray25")
+        bouton.pack(pady=4, padx=12, fill="x")
+        return bouton
 
     #Crée le cadre qui contient les pages.
     def creer_zone_contenu(self):
@@ -114,8 +126,11 @@ class ApplicationMusicStats(ctk.CTk):
         self.activer_menu(False)
 
         #Affiche un message pendant le chargement.
-        message = ctk.CTkLabel(self.contenu, text="Chargement des données...", font=("Arial", 18))
-        message.grid(row=0, column=0)
+        cadre = ctk.CTkFrame(self.contenu, fg_color="transparent")
+        cadre.grid(row=0, column=0)
+        ctk.CTkLabel(cadre, text="Chargement des données...", font=("Arial", 22, "bold")).pack()
+        ctk.CTkLabel(cadre, text=os.path.basename(chemin), font=("Arial", 13), text_color="gray60").pack(pady=5)
+        self.label_infos.configure(text="Chargement...")
         self.update()
 
         try:
@@ -149,6 +164,12 @@ class ApplicationMusicStats(ctk.CTk):
         #gardé ici pour quand la page pourra le recevoir.
         self.prevision = PrevisionPopularite()
 
+        #Écrit le nombre avec un espace entre les milliers (ex. 50456 devient 50 456).
+        nombre_ecoutes = f"{len(self.collection.ecoutes):,}".replace(",", " ")
+        self.label_infos.configure(text="📁 " + os.path.basename(chemin) + "\n"
+                                   + nombre_ecoutes + " écoutes · "
+                                   + str(len(self.collection.utilisateurs)) + " utilisateurs")
+
         self.vider_contenu()
         self.creer_pages()
         self.activer_menu(True)
@@ -168,18 +189,23 @@ class ApplicationMusicStats(ctk.CTk):
     #Affiche un message d'erreur clair et un bouton pour choisir un autre fichier.
     def afficher_erreur(self, message):
         self.vider_contenu()
+        self.label_infos.configure(text="Aucune donnée chargée")
 
         cadre = ctk.CTkFrame(self.contenu, fg_color="transparent")
         cadre.grid(row=0, column=0)
 
-        titre = ctk.CTkLabel(cadre, text="Impossible de charger les données", font=("Arial", 24, "bold"),
-                             text_color="#d9534f")
-        titre.pack(pady=(0, 15))
+        icone = ctk.CTkLabel(cadre, text="⚠️", font=("Arial", 48))
+        icone.pack()
 
-        texte = ctk.CTkLabel(cadre, text=message, wraplength=650, justify="center")
+        titre = ctk.CTkLabel(cadre, text="Impossible de charger les données", font=("Arial", 24, "bold"),
+                             text_color="#e5675f")
+        titre.pack(pady=(5, 15))
+
+        texte = ctk.CTkLabel(cadre, text=message, wraplength=650, justify="center", text_color="gray75")
         texte.pack(pady=10)
 
-        bouton = ctk.CTkButton(cadre, text="Choisir un fichier CSV...", command=self.choisir_fichier)
+        bouton = ctk.CTkButton(cadre, text="📂  Choisir un fichier CSV...", command=self.choisir_fichier,
+                               height=40, font=("Arial", 15))
         bouton.pack(pady=15)
 
     #Ouvre une boite de dialogue pour choisir un CSV.
@@ -202,9 +228,10 @@ class ApplicationMusicStats(ctk.CTk):
 
         for nom_bouton, bouton in self.boutons.items():
             if nom_bouton == nom:
-                bouton.configure(fg_color=self.couleur_bouton_actif)
+                bouton.configure(fg_color=self.couleur_bouton_actif, hover_color=self.couleur_bouton_actif,
+                                 font=("Arial", 15, "bold"))
             else:
-                bouton.configure(fg_color=self.couleur_bouton)
+                bouton.configure(fg_color=self.couleur_bouton, hover_color="gray25", font=("Arial", 15))
 
     #Affiche la page du tableau de bord.
     def afficher_dashboard(self):
