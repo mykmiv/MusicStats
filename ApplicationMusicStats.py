@@ -1,4 +1,5 @@
 import os
+import sys
 from tkinter import filedialog
 
 import customtkinter as ctk
@@ -15,7 +16,12 @@ from PagePrevision import PagePrevision
 
 #Chemin du CSV par défaut, calculé à partir du dossier de ce fichier
 #pour que l'application fonctionne peu importe d'où elle est lancée.
-CHEMIN_CSV_DEFAUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "donnees.csv")
+#Dans l'exe, le CSV est dans le dossier temporaire créé par PyInstaller.
+if getattr(sys, "frozen", False):
+    DOSSIER_APPLICATION = sys._MEIPASS
+else:
+    DOSSIER_APPLICATION = os.path.dirname(os.path.abspath(__file__))
+CHEMIN_CSV_DEFAUT = os.path.join(DOSSIER_APPLICATION, "donnees.csv")
 
 
 class ApplicationMusicStats(ctk.CTk):
