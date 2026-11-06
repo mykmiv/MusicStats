@@ -1,15 +1,28 @@
 import customtkinter as ctk
 
+# Permet d'afficher les graphiques Matplotlib
+# directement dans un cadre CustomTkinter.
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
+
 class PageProfils(ctk.CTkFrame):
 
     #Initialise la page Profils en enregistrant la collection,
     #en indiquant qu'aucun utilisateur n'est sélectionné et 
     #en créant les éléments visuels de la page.
-    def __init__(self, parent, collection):
-        ctk.CTkFrame.__init__(self, parent)
+    def __init__(self, parent, collection, analyseur, graphiques):
 
+        #Initialise le cadre CustomTkinter de la page Profils.
+        ctk.CTkFrame.__init__(self, parent)
+        
         #Enregistre la collection musicale utilisé pour la recherche.
         self.collection = collection
+
+        # Conserve l'analyseur pour calculer les statistiques.
+        self.analyseur = analyseur
+
+        # Conserve le gestionnaire pour créer les graphiques.
+        self.graphiques = graphiques  
 
         #Aucun utilisateur n'est sélectionné au départ.
         self.utilisateur_selectionne = None
@@ -21,12 +34,17 @@ class PageProfils(ctk.CTkFrame):
     #les étiquettes qui permetteront d'afficher les infos du profil sélectionne.
     def creer_interface(self):
 
+        # Crée une zone défilable pour permettre de consulter
+        # les informations, les statistiques et les graphiques.
+        self.zone = ctk.CTkScrollableFrame(self)
+        self.zone.pack(fill="both", expand=True)
+
         #Crée et affiche le titre de la page.
-        self.titre = ctk.CTkLabel(self, text="Profils des utilisateurs", font=("arial", 28 ,"bold"))
+        self.titre = ctk.CTkLabel(self.zone, text="Profils des utilisateurs", font=("arial", 28 ,"bold"))
         self.titre.pack(pady=15)
 
         #Crée un cadre pour la recherche d'un utilisateur.
-        self.cadre_recherche = ctk.CTkFrame(self)
+        self.cadre_recherche = ctk.CTkFrame(self.zone)
         self.cadre_recherche.pack(fill="x", padx=20, pady=10)
 
         #Crée un champ pour écrire le nom de l'utilisateur recherché.
@@ -38,11 +56,11 @@ class PageProfils(ctk.CTkFrame):
         self.bouton_recherche.pack(pady=10)
 
         #Crée une étiquette pour afficher les messages de recherche.
-        self.label_message = ctk.CTkLabel(self, text="")
+        self.label_message = ctk.CTkLabel(self.zone, text="")
         self.label_message.pack(pady=5)
 
         #Crée un cadre pour afficher les infos du profil,
-        self.cadre_profil = ctk.CTkFrame(self)
+        self.cadre_profil = ctk.CTkFrame(self.zone)
 
         #Crée une étiquette qui indique qu'aucun profil n'est encore sélectionné.
         self.label_profil = ctk.CTkLabel(self.cadre_profil, text="Aucun utilisateur sélectionné")
@@ -50,7 +68,7 @@ class PageProfils(ctk.CTkFrame):
         self.cadre_profil.pack(fill="x", padx=20, pady=10)
         
         #Crée un cadre pour les classements des artistes et des chansons.
-        self.cadre_classements = ctk.CTkFrame(self)
+        self.cadre_classements = ctk.CTkFrame(self.zone)
         self.cadre_classements.pack(fill="x", padx=20, pady=10)
 
         #Crée une étiquette pour afficher les artistes préférés.
@@ -60,6 +78,57 @@ class PageProfils(ctk.CTkFrame):
         #Crée une étiquette pour afficher les chansons préférés.
         self.label_chansons = ctk.CTkLabel(self.cadre_classements, text="", justify="left")
         self.label_chansons.pack(pady=10)
+
+        # Crée un cadre pour afficher la fidélité musicale
+        # et le coefficient de variation de l'utilisateur.
+        self.cadre_statistiques = ctk.CTkFrame(self.zone)
+        self.cadre_statistiques.pack(fill="x", padx=20, pady=10)
+
+        # Crée une étiquette pour afficher la fidélité musicale.
+        self.label_fidelite = ctk.CTkLabel(self.cadre_statistiques, text="Fidélité musicale : —")
+        self.label_fidelite.pack(pady=10)
+
+        # Crée une étiquette pour afficher la régularité d'écoute.
+        self.label_regularite = ctk.CTkLabel(self.cadre_statistiques, text="Coefficient de variation : —")
+        self.label_regularite.pack(pady=10)
+
+        # Crée un cadre pour contenir les deux graphiques
+        # déjà programmés dans GestionnaireGraphiques.
+        self.cadre_graphiques = ctk.CTkFrame(self.zone)
+        self.cadre_graphiques.pack(fill="x", padx=20, pady=10)
+
+        # Récupère le diagramme circulaire qui montre
+        # la répartition des écoutes selon le jour de la semaine.
+        figure_jours = self.graphiques.graphique_jours()
+
+        # Adapte les dimensions du graphique pour l'interface.
+        figure_jours.set_size_inches(5.5, 3.5)
+
+        # Intègre le graphique Matplotlib dans le cadre CustomTkinter.
+        self.canvas_jours = FigureCanvasTkAgg(figure_jours, master=self.cadre_graphiques)
+
+        # Dessine et affiche le diagramme circulaire.
+        self.canvas_jours.draw()
+        self.canvas_jours.get_tk_widget().pack(pady=10)
+
+        # Récupère le graphique à barres qui montre
+        # le nombre d'écoutes selon l'heure de la journée.
+        figure_heures = self.graphiques.graphique_heures()
+
+        # Adapte les dimensions du deuxième graphique.
+        figure_heures.set_size_inches(5.5, 3.5)
+
+        # Intègre le deuxième graphique dans le même cadre.
+        self.canvas_heures = FigureCanvasTkAgg(figure_heures, master=self.cadre_graphiques )
+
+        # Dessine et affiche le graphique à barres.
+        self.canvas_heures.draw()
+        self.canvas_heures.get_tk_widget().pack(pady=10)
+
+        # Retire les figures de la gestion des fenêtres pyplot.
+        # Elles restent affichées dans les widgets Tkinter.
+        plt.close(figure_jours)
+        plt.close(figure_heures)
 
     #Récupère le nom écrit dans le champ de recherche et cherche
     #un utilisateur avec ce nom dans la collection musicale.
@@ -96,6 +165,10 @@ class PageProfils(ctk.CTkFrame):
             self.label_artistes.configure(text="")
             self.label_chansons.configure(text="")
 
+            # Efface les statistiques si aucun utilisateur n'est trouvé.
+            self.label_fidelite.configure(text="Fidélité musicale : —")
+            self.label_regularite.configure(text="Coefficient de variation : —")
+
     #Enregistre l'utilisateur sélectionné, récupère son nombre total
     #d'écoutes et affiche ses infos etses classements.
     def afficher_profil(self, utilisateur):
@@ -115,6 +188,20 @@ class PageProfils(ctk.CTkFrame):
         #Affiche les artistes et chansons préférés de l'utilisateur.
         self.afficher_artistes_preferes(utilisateur)
         self.afficher_chansons_preferees(utilisateur)
+
+        # Calcule le pourcentage des écoutes consacrées
+        # aux cinq artistes préférés de l'utilisateur.
+        fidelite = self.analyseur.fidelite_musicale(utilisateur)
+
+        # Calcule le coefficient de variation des écoutes
+        # quotidiennes pour mesurer leur régularité.
+        regularite = self.analyseur.coefficient_variation(utilisateur)
+
+        # Affiche la fidélité musicale avec deux décimales.
+        self.label_fidelite.configure(text="Fidélité musicale : " + str(round(fidelite, 2)) + " %")
+
+        # Affiche le coefficient de variation avec deux décimales.
+        self.label_regularite.configure(text="Coefficient de variation : " + str(round(regularite, 2)) + " %")
 
     #Compte les écoutes de chaque artiste pour un utilisateur,
     #trouve les 5 artistes ayant le plus d'écoutes et les affiche

@@ -85,9 +85,17 @@ class ApplicationMusicStats(ctk.CTk):
     # ses trois boutons de navigation et leur configuration.
     def creer_menu(self):
 
-        #Crée un cadre pour le menu de navigation.
+        # Crée un cadre de 200 pixels de largeur qui servira
+        # à contenir les boutons de navigation..
         self.menu = ctk.CTkFrame(self, width=200)
+
+         # Place le menu à gauche de la fenêtre et lui permet
+        # de remplir la hauteur disponible. padx et pady
+        # ajoutent un espace extérieur de 10 pixels.
         self.menu.pack(side="left", fill="y", padx=10, pady=10)
+
+         # Empêche le cadre d'ajuster automatiquement sa taille
+        # aux éléments qu'il contient pour conserver sa largeur.
         self.menu.pack_propagate(False)
 
         #Affiche le titre de l'application.
@@ -188,7 +196,7 @@ class ApplicationMusicStats(ctk.CTk):
     #Crée les 3 pages et les place au meme endroit.
     def creer_pages(self):
         self.pages["dashboard"] = PageTableauDeBord(self.contenu, self.collection, self.analyseur, self.graphiques)
-        self.pages["profils"] = PageProfils(self.contenu, self.collection)
+        self.pages["profils"] = PageProfils(self.contenu, self.collection, self.analyseur, self.graphiques)
         self.pages["previsions"] = PagePrevision(self.contenu, self.collection)
 
         #Place les pages dans la meme case puis les cache.
