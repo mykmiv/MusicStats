@@ -23,35 +23,66 @@ else:
     DOSSIER_APPLICATION = os.path.dirname(os.path.abspath(__file__))
 CHEMIN_CSV_DEFAUT = os.path.join(DOSSIER_APPLICATION, "donnees.csv")
 
-
+# Classe principale qui hérite de ctk.CTk pour créer
+# la fenêtre de MusicStats et gérer la navigation
+# entre les trois pages de l'application.
 class ApplicationMusicStats(ctk.CTk):
 
-    #Initialise la fenetre principale, charge le CSV une seule fois
-    #et crée les objets partagés par les 3 pages.
+    # Initialise la fenêtre principale et reçoit la collection
+    # musicale, l'analyseur statistique et le gestionnaire de
+    # graphiques nécessaires au fonctionnement des pages.
     def __init__(self, chemin_csv=CHEMIN_CSV_DEFAUT):
+
+         # Appelle le constructeur de la classe parente ctk.CTk
+        # pour initialiser la fenêtre principale de l'application.
         ctk.CTk.__init__(self)
 
-        #Objets créés seulement si le chargement du CSV réussit.
+        # Enregistre la collection musicale reçue en paramètre
+        # afin de la transmettre aux pages de l'application.
         self.collection = None
+
+        # Enregistre l'analyseur statistique pour permettre
+        # aux pages d'utiliser les résultats de ses calculs.
         self.analyseur = None
+
+        # Enregistre le gestionnaire de graphiques pour
+        # permettre aux pages d'afficher des graphiques.
         self.graphiques = None
+
+        # Initialise l'attribut prevision à None pour indiquer
+        # qu'aucun objet de prévision ne lui est encore attribué.
         self.prevision = None
+
+        # Initialise un dictionnaire vide pouvant conserver
+        # les références aux différentes pages de l'application.
         self.pages = {}
 
-        #Crée la fenetre principale.
+        # Définit le titre affiché dans la barre de la fenêtre.
         self.title("MusicStats")
+
+         # Définit les dimensions initiales de la fenêtre
+        # à 1100 pixels de largeur et 750 pixels de hauteur.
         self.geometry("1100x750")
+
+        # Empêche de réduire la fenêtre sous une largeur de
+        # 850 pixels et une hauteur de 600 pixels.
         self.minsize(850, 600)
 
         #Ferme aussi les fenetres Matplotlib quand on quitte l'application.
         self.protocol("WM_DELETE_WINDOW", self.quitter)
 
-        #Crée le menu et la zone de contenu, puis charge les données.
+        # Crée le menu contenant les boutons de navigation.
         self.creer_menu()
+
+        # Crée le conteneur dans lequel les pages seront affichées.
         self.creer_zone_contenu()
+
+        # Charge les données musicales à partir du CSV choisi.
+        # Si le chargement réussit, les pages seront créées.
         self.charger_donnees(chemin_csv)
 
-    #Crée le menu de navigation à gauche de la fenetre.
+     # Crée le menu latéral de l'application avec son titre,
+    # ses trois boutons de navigation et leur configuration.
     def creer_menu(self):
 
         #Crée un cadre pour le menu de navigation.
