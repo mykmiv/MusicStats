@@ -22,7 +22,8 @@ class ApplicationMusicStats(ctk.CTk):
         self.minsize(850, 600)
 
         #Crée l'interface et affiche le tableau de bord.
-        self.creer_menu_navigation()
+        self.creer_interface()
+        self.afficher_page("dashboard")
 
 
     #Crée le menu de naviguation et la zone contenat les pages.
@@ -35,10 +36,10 @@ class ApplicationMusicStats(ctk.CTk):
 
         #Affiche le titre de l'application.
         self.titre = ctk.CTkLabel(self.menu, text="MusicStats", font=("Arial", 26, "bold"))
-        self.titres.pack(pady=30)
+        self.titre.pack(pady=30)
 
         #Crée le bouton pour afficher le tableau de bord.
-        self.bouton_dashboard = ctk.CTkButtons(self.menu, text="Tableau de bord", command=self.afficher_dashboard)
+        self.bouton_dashboard = ctk.CTkButton(self.menu, text="Tableau de bord", command=self.afficher_dashboard)
         self.bouton_dashboard.pack(pady=10, padx=10, fill="x")
 
         #Crée le bouton pour afficher les profils.
@@ -51,7 +52,7 @@ class ApplicationMusicStats(ctk.CTk):
 
         #Crée l cadre qui contient les pages.
         self.contenu = ctk.CTkFrame(self)
-        self.contenu.pack(side="right", padx=10, pady=10)
+        self.contenu.pack(side="right", fill="both", expand=True, padx=10, pady=10)
 
         #Permet aux pages de prendre la zone dispo.
         self.contenu.grid_rowconfigure(0, weight=1)
@@ -61,7 +62,7 @@ class ApplicationMusicStats(ctk.CTk):
         self.page_dashboard = PageTableauDeBord(self.contenu, self.collection, self.analyseur, self.graphiques)
 
         #Crée la page des profils.
-        self.page_profils = PageProfil(self.contenu, self.collection)
+        self.page_profils = PageProfils(self.contenu, self.collection)
 
         #Crée la page prevision.
         self.page_previsions = PagePrevision(self.contenu, self.collection)
@@ -91,6 +92,10 @@ class ApplicationMusicStats(ctk.CTk):
 
         elif page == "previsions":
             self.page_previsions.grid()
+
+    #Affiche la page du tableau de brd
+    def afficher_dashboard(self):
+        self.afficher_page("dashboard")
 
     #Affiche page des profils.
     def afficher_profils(self):
